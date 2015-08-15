@@ -1,0 +1,5 @@
+D:\Laboratory\UN_Hackathon\VS\ConversationProcessor\DataStorage\bin\Debug\DataStorage.dll
+D:\Laboratory\UN_Hackathon\VS\ConversationProcessor\DataStorage\bin\Debug\DataStorage.pdb
+D:\Laboratory\UN_Hackathon\VS\ConversationProcessor\DataStorage\obj\Debug\DataStorage.csprojResolveAssemblyReference.cache
+D:\Laboratory\UN_Hackathon\VS\ConversationProcessor\DataStorage\obj\Debug\DataStorage.dll
+D:\Laboratory\UN_Hackathon\VS\ConversationProcessor\DataStorage\obj\Debug\DataStorage.pdb

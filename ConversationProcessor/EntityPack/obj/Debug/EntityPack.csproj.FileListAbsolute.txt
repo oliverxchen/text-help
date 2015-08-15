@@ -1,0 +1,5 @@
+D:\Laboratory\UN_Hackathon\VS\ConversationProcessor\EntityPack\bin\Debug\EntityPack.dll
+D:\Laboratory\UN_Hackathon\VS\ConversationProcessor\EntityPack\bin\Debug\EntityPack.pdb
+D:\Laboratory\UN_Hackathon\VS\ConversationProcessor\EntityPack\obj\Debug\EntityPack.dll
+D:\Laboratory\UN_Hackathon\VS\ConversationProcessor\EntityPack\obj\Debug\EntityPack.pdb
+D:\Laboratory\UN_Hackathon\VS\ConversationProcessor\EntityPack\obj\Debug\EntityPack.csprojResolveAssemblyReference.cache
