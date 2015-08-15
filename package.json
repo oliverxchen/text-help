@@ -1,0 +1,8 @@
+{
+    "name": "text-help",
+    "version": "0.0.1",
+    "description": "sms to web chat for abuse help",
+    "dependencies": {
+        "express": "~4.13.3"
+    }
+}
