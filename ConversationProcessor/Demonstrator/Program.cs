@@ -12,6 +12,7 @@ using IODWrapper;
 
 using EntityPack;
 
+
 namespace Demonstrator
 {
 
@@ -151,8 +152,10 @@ namespace Demonstrator
             processedConversation.Gender = rawConversation.Gender;
             processedConversation.AgeGroup = rawConversation.AgeGroup;
             processedConversation.Exchanges = rawConversation.Exchanges;
+            Random random = new Random();
+            processedConversation.Category = random.Next(0, 8);
 
-            string IODApiKey = "Put API Key Here";
+            string IODApiKey = "Put your API Key here.";
 
             try
             {
@@ -244,7 +247,7 @@ namespace Demonstrator
                     cmd.Parameters.Add(new NpgsqlParameter("@reporter_nationality", conversation.Nationality));
                     cmd.Parameters.Add(new NpgsqlParameter("@reporter_age_group", conversation.AgeGroup));
                     NpgsqlParameter category = new NpgsqlParameter("@category", DbType.Int32);
-                    category.Value = 0;
+                    category.Value = conversation.Category;
                     cmd.Parameters.Add(category);
                     NpgsqlParameter days = new NpgsqlParameter("@days", DbType.Int32);
                     days.Value = 0;
