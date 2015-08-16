@@ -1,0 +1,10 @@
+D:\Laboratory\UN_Hackathon\IDOLOnDemandWrapper-master\IODWrapper\bin\Debug\IODWrapper.dll.config
+D:\Laboratory\UN_Hackathon\IDOLOnDemandWrapper-master\IODWrapper\bin\Debug\IODWrapper.dll
+D:\Laboratory\UN_Hackathon\IDOLOnDemandWrapper-master\IODWrapper\bin\Debug\IODWrapper.pdb
+D:\Laboratory\UN_Hackathon\IDOLOnDemandWrapper-master\IODWrapper\bin\Debug\Newtonsoft.Json.dll
+D:\Laboratory\UN_Hackathon\IDOLOnDemandWrapper-master\IODWrapper\bin\Debug\RestSharp.dll
+D:\Laboratory\UN_Hackathon\IDOLOnDemandWrapper-master\IODWrapper\bin\Debug\Newtonsoft.Json.xml
+D:\Laboratory\UN_Hackathon\IDOLOnDemandWrapper-master\IODWrapper\bin\Debug\RestSharp.xml
+D:\Laboratory\UN_Hackathon\IDOLOnDemandWrapper-master\IODWrapper\obj\Debug\IODWrapper.csprojResolveAssemblyReference.cache
+D:\Laboratory\UN_Hackathon\IDOLOnDemandWrapper-master\IODWrapper\obj\Debug\IODWrapper.dll
+D:\Laboratory\UN_Hackathon\IDOLOnDemandWrapper-master\IODWrapper\obj\Debug\IODWrapper.pdb
