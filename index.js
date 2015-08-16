@@ -83,29 +83,24 @@ app.post('/new', function(req, res) {
             }
 
             console.log(result.rows[0].count);
-            if (result.rows[0].count < 2) {
-                console.log('in the if');
+            if (result.rows[0].count < 1) {
+                console.log('in the if!');
+
                 io.emit('chat message', message);
+        //query_complete = 'INSERT INTO raw_conversation(\"from\", \"to\", phone_number, timestamp_local, sms_content, is_sent) SELECT \'Victim1\',\'Volunteer1\',' + query_insert + ', true WHERE \'' + message + '\' NOT IN (SELECT sms_content from raw_conversation)';
+        
+                query_complete = 'INSERT INTO raw_conversation(\"from\", \"to\", phone_number, timestamp_local, sms_content, is_sent) SELECT \'Victim1\',\'Volunteer1\',' + query_insert + ', true'; 
+        
+                console.log(query_complete);
+                client.query(query_complete, function(err, result) {
+                    if(err) {
+                        return console.error('error 1 running insert query', err);
+                    }
+                    res.writeHead(200,{"Content-Type":'application/json'});
+                    res.end("success");
+                    client.end();
+                });
             }
-            client.end();
-        });
-    });
-
-
-    var client = new pg.Client(conString);
-    client.connect(function(err, req) {
-        if(err) {
-            return console.error('could not connect to postgres', err);
-        }
-        query_complete = 'INSERT INTO raw_conversation(\"from\", \"to\", phone_number, timestamp_local, sms_content, is_sent) SELECT \'Victim1\',\'Volunteer1\',' + query_insert + ', true WHERE \'' + message + '\' NOT IN (SELECT sms_content from raw_conversation)';
-        console.log(query_complete);
-        client.query(query_complete, function(err, result) {
-            if(err) {
-                return console.error('error 1 running insert query', err);
-            }
-            res.writeHead(200,{"Content-Type":'application/json'});
-            res.end("success");
-            client.end();
         });
     });
 });
