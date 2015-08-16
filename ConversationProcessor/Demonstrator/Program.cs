@@ -16,17 +16,17 @@ using EntityPack;
 namespace Demonstrator
 {
 
-	class Program
-	{
+    class Program
+    {
 
-		static void Main(string[] args)
-		{
+        static void Main(string[] args)
+        {
             List<RawConversation> rawList = GetConversationList();
             List<RawConversation> uniqueList = GetUniqueConversationList(rawList);
             List<ProcessedConversation> processedConversation = GetProcessedConversationList(uniqueList);
 
             SaveToDataStore(processedConversation);
-		}
+        }
 
         private static List<RawConversation> GetConversationList()
         {
@@ -56,6 +56,7 @@ namespace Demonstrator
                                     INNER JOIN 
                                     user_data U
                                     ON (M.phone_number = U.contact_number)
+                                    LIMIT 5
                                 ";
 
                 NpgsqlCommand command = new NpgsqlCommand(query, conn);
@@ -97,12 +98,12 @@ namespace Demonstrator
             string phoneNumber = "";
             RawConversation tempMessage = new RawConversation();
 
-            foreach(RawConversation message in rawlist)
+            foreach (RawConversation message in rawlist)
             {
                 //V.phone_number, vm, rm, U.location, U.nationality, U.age_group, U.gender
-                if(phoneNumber != message.PhoneNumber)
+                if (phoneNumber != message.PhoneNumber)
                 {
-                    if(phoneNumber != "")
+                    if (phoneNumber != "")
                     {
                         uniqueList.Add(tempMessage);
                     }
@@ -134,7 +135,7 @@ namespace Demonstrator
         {
             List<ProcessedConversation> processedConversationList = new List<ProcessedConversation>();
 
-            foreach(RawConversation rawMessage in uniqueList)
+            foreach (RawConversation rawMessage in uniqueList)
             {
                 ProcessedConversation processedConversation = GetSentiment(rawMessage);
                 processedConversationList.Add(processedConversation);
@@ -145,6 +146,7 @@ namespace Demonstrator
 
         private static ProcessedConversation GetSentiment(RawConversation rawConversation)
         {
+            Console.WriteLine("Processing sentiment for phone_number {0} data...", rawConversation.PhoneNumber);
             ProcessedConversation processedConversation = new ProcessedConversation();
             processedConversation.PhoneNumber = rawConversation.PhoneNumber;
             processedConversation.Location = rawConversation.Location;
@@ -155,36 +157,60 @@ namespace Demonstrator
             Random random = new Random();
             processedConversation.Category = random.Next(0, 8);
 
-            string IODApiKey = "Put your API Key here.";
+            string IODApiKey = "Put your Api Key here.";
 
             try
             {
                 IODJobBatchRequest req = new IODJobBatchRequest();
                 req.ApiKey = IODApiKey;
 
-                SentimentRequest srVM = new SentimentRequest(IODSource.text, rawConversation.VolunteerMessage);
-                req.AddRequest(srVM);
-                srVM.OnResponse = (status, response) =>
+                if (String.IsNullOrEmpty(rawConversation.VolunteerMessage))
                 {
-                    processedConversation.VolunteerMsgSenti = response.aggregate.score;
-                };
-
-                SentimentRequest srRM = new SentimentRequest(IODSource.text, rawConversation.ReporterMessage);
-                req.AddRequest(srRM);
-                srRM.OnResponse = (status, response) =>
+                    processedConversation.VolunteerMsgSenti = 0;
+                }
+                else
                 {
-                    processedConversation.ReporterMsgSenti = response.aggregate.score;
-                };
+                    SentimentRequest srVM = new SentimentRequest(IODSource.text, rawConversation.VolunteerMessage);
+                    req.AddRequest(srVM);
+                    srVM.OnResponse = (status, response) =>
+                    {
+                        processedConversation.VolunteerMsgSenti = response.aggregate.score;
+                    };
+                }
 
-                SentimentRequest srOM = new SentimentRequest(IODSource.text, rawConversation.VolunteerMessage + rawConversation.ReporterMessage);
-                req.AddRequest(srOM);
-                srOM.OnResponse = (status, response) =>
+                if (String.IsNullOrEmpty(rawConversation.ReporterMessage))
                 {
-                    processedConversation.OverallMsgSenti = response.aggregate.score;
-                };
+                    processedConversation.ReporterMsgSenti = 0;
+                }
+                else
+                {
+                    SentimentRequest srRM = new SentimentRequest(IODSource.text, rawConversation.ReporterMessage);
+                    req.AddRequest(srRM);
+                    srRM.OnResponse = (status, response) =>
+                    {
+                        processedConversation.ReporterMsgSenti = response.aggregate.score;
+                    };
+                }
 
-                Console.WriteLine("Making request ...");
-                req.MakeRequest();
+                if (String.IsNullOrEmpty(rawConversation.VolunteerMessage + rawConversation.ReporterMessage))
+                {
+                    processedConversation.OverallMsgSenti = 0;
+                }
+                else
+                {
+                    SentimentRequest srOM = new SentimentRequest(IODSource.text, rawConversation.VolunteerMessage + rawConversation.ReporterMessage);
+                    req.AddRequest(srOM);
+                    srOM.OnResponse = (status, response) =>
+                    {
+                        processedConversation.OverallMsgSenti = response.aggregate.score;
+                    };
+                }
+
+                if (!String.IsNullOrEmpty(rawConversation.VolunteerMessage + rawConversation.ReporterMessage))
+                {
+                    Console.WriteLine("Making request ...");
+                    req.MakeRequest();
+                }
 
             }
             catch (Exception e)
@@ -197,16 +223,17 @@ namespace Demonstrator
 
         private static void SaveToDataStore(List<ProcessedConversation> processedConversationList)
         {
-            NpgsqlConnection conn = new NpgsqlConnection("Server=52.74.179.57;Port=5432;UserId=postgres;Password=1234;Database=smsdb;");
-
-            conn.Open();
-            try
+   
+            foreach (ProcessedConversation conversation in processedConversationList)
             {
-                foreach(ProcessedConversation conversation in processedConversationList)
-                {
-//                    "reporter_sentiment"   "volunteer_sentiment"  "overall_sentiment"    "reporter_gender"      "reporter_country"    
-//"reporter_nationality" "reporter_age_group"   "category"             "days"                 "exchanges"
+                //                    "reporter_sentiment"   "volunteer_sentiment"  "overall_sentiment"    "reporter_gender"      "reporter_country"    
+                //"reporter_nationality" "reporter_age_group"   "category"             "days"                 "exchanges"
+                NpgsqlConnection conn = new NpgsqlConnection("Server=52.74.179.57;Port=5432;UserId=postgres;Password=1234;Database=smsdb;");
 
+                try
+                {
+                    Console.WriteLine("Inserting phone_number {0} data...", conversation.PhoneNumber);
+                    conn.Open();
                     NpgsqlCommand cmd = new NpgsqlCommand();
                     cmd.Connection = conn;
                     cmd.CommandText = @"
@@ -258,14 +285,16 @@ namespace Demonstrator
 
                     cmd.ExecuteNonQuery();
                     cmd.Dispose();
+
+                }
+
+                finally
+                {
+                    conn.Close();
                 }
             }
 
-            finally
-            {
-                conn.Close();
-            }
         }
-	}
+    }
 
 }
